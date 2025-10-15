@@ -36,3 +36,49 @@
     transform: rotate(360deg);
   }
 }
+
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f7f7fb;
+  color: #111;
+  margin: 0;
+  padding: 20px;
+}
+.join-screen,
+.meeting-view {
+  background: #fff;
+  padding: 18px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+  max-width: 900px;
+  margin: 24px auto;
+}
+.join-screen input[type="text"] {
+  padding: 8px 10px;
+  width: 320px;
+  margin-right: 12px;
+}
+.buttons {
+  margin-top: 12px;
+}
+.hint {
+  color: #6b7280;
+  font-size: 13px;
+}
+.controls button,
+.switch-relay button {
+  margin-right: 10px;
+  margin-top: 10px;
+}
+.participant {
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: 6px;
+  background: #f3f4f6;
+}
+.video-container {
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 6px;
+}

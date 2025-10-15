@@ -10,6 +10,12 @@ export const createMeeting = async ({ token }) => {
     },
     body: JSON.stringify({}),
   });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to create meeting: ${res.status} ${text}`);
+  }
+
   //Destructuring the roomId from the response
   const { roomId } = await res.json();
   return roomId;
