@@ -66,7 +66,9 @@ function RoomInterface({
   onSwitchRoom, 
   targetRoomId, 
   targetRoomName,
-  onLeaveAll 
+  onLeaveAll,
+  roomAId,
+  roomBId
 }) {
   const [joined, setJoined] = useState(false);
   const [relayActive, setRelayActive] = useState(false);
@@ -107,7 +109,6 @@ function RoomInterface({
   const handleSwitchRoom = () => {
     console.log(`🔄 Switching from ${roomName} to ${targetRoomName}`);
     
-    // Stop relay if active
     if (relayActive && meeting) {
       meeting.stopLivestream().catch(err => console.error("Error stopping relay:", err));
       setRelayActive(false);
@@ -167,6 +168,7 @@ function RoomInterface({
         
         setRelayActive(true);
         console.log(`✅ Media relay active to ${targetRoomName}`);
+        alert(`Media Relay Started!\n\nYour audio/video is now being broadcast to ${targetRoomName}.\n\nOpen another tab and join ${targetRoomName} to see the relay.`);
       } else {
         console.log("🛑 Stopping media relay");
         await meeting.stopLivestream();
@@ -189,6 +191,14 @@ function RoomInterface({
     }, 300);
   };
 
+  const copyRoomId = (roomId, roomName) => {
+    navigator.clipboard.writeText(roomId).then(() => {
+      alert(`${roomName} ID copied to clipboard!\n\n${roomId}\n\nPaste this in another tab to join the same room.`);
+    }).catch(() => {
+      alert(`${roomName} ID: ${roomId}\n\nCopy this to join from another tab.`);
+    });
+  };
+
   return (
     <div style={{ 
       padding: "20px", 
@@ -207,6 +217,78 @@ function RoomInterface({
         <h2 style={{ margin: "5px 0" }}>🏠 {roomName}</h2>
         <p style={{ margin: "5px 0", fontSize: "12px", opacity: 0.9 }}>
           Meeting ID: {meetingId}
+        </p>
+      </div>
+
+      {/* Room IDs Display */}
+      <div style={{ 
+        padding: "15px", 
+        backgroundColor: "#e3f2fd", 
+        borderRadius: "5px",
+        marginBottom: "20px"
+      }}>
+        <h3 style={{ margin: "0 0 10px 0", fontSize: "16px" }}>📋 Room IDs (Share with others)</h3>
+        <div style={{ display: "flex", gap: "10px", flexDirection: "column" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ fontSize: "14px", fontWeight: "bold" }}>Room A:</span>
+            <code style={{ 
+              backgroundColor: "white", 
+              padding: "5px 10px", 
+              borderRadius: "3px",
+              fontSize: "12px",
+              flex: 1
+            }}>
+              {roomAId}
+            </code>
+            <button 
+              onClick={() => copyRoomId(roomAId, "Room A")}
+              style={{
+                padding: "5px 15px",
+                fontSize: "12px",
+                backgroundColor: "#2196F3",
+                color: "white",
+                border: "none",
+                borderRadius: "3px",
+                cursor: "pointer"
+              }}
+            >
+              📋 Copy
+            </button>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ fontSize: "14px", fontWeight: "bold" }}>Room B:</span>
+            <code style={{ 
+              backgroundColor: "white", 
+              padding: "5px 10px", 
+              borderRadius: "3px",
+              fontSize: "12px",
+              flex: 1
+            }}>
+              {roomBId}
+            </code>
+            <button 
+              onClick={() => copyRoomId(roomBId, "Room B")}
+              style={{
+                padding: "5px 15px",
+                fontSize: "12px",
+                backgroundColor: "#2196F3",
+                color: "white",
+                border: "none",
+                borderRadius: "3px",
+                cursor: "pointer"
+              }}
+            >
+              📋 Copy
+            </button>
+          </div>
+        </div>
+        <p style={{ 
+          margin: "10px 0 0 0", 
+          fontSize: "12px", 
+          color: "#666",
+          fontStyle: "italic" 
+        }}>
+          💡 Copy these IDs and use "Join Existing Room" in another tab to join the same rooms
         </p>
       </div>
 
@@ -335,11 +417,141 @@ const controlButton = {
   transition: "all 0.3s"
 };
 
+function JoinExistingRoomScreen({ onJoinRoom, onBack }) {
+  const [roomAInput, setRoomAInput] = useState("");
+  const [roomBInput, setRoomBInput] = useState("");
+  const [selectedRoom, setSelectedRoom] = useState("A");
+
+  const handleJoin = () => {
+    if (!roomAInput.trim() || !roomBInput.trim()) {
+      alert("Please enter both Room A and Room B IDs");
+      return;
+    }
+    onJoinRoom(roomAInput.trim(), roomBInput.trim(), selectedRoom === "A" ? roomAInput.trim() : roomBInput.trim());
+  };
+
+  return (
+    <div style={{ 
+      padding: "40px", 
+      textAlign: "center",
+      maxWidth: "600px",
+      margin: "0 auto"
+    }}>
+      <h2 style={{ color: "#4CAF50" }}>🚪 Join Existing Rooms</h2>
+      <p style={{ color: "#666", marginBottom: "30px" }}>
+        Enter the Room IDs shared with you
+      </p>
+
+      <div style={{ marginBottom: "20px", textAlign: "left" }}>
+        <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
+          Room A ID:
+        </label>
+        <input
+          type="text"
+          value={roomAInput}
+          onChange={(e) => setRoomAInput(e.target.value)}
+          placeholder="Enter Room A ID"
+          style={{
+            width: "100%",
+            padding: "12px",
+            fontSize: "14px",
+            border: "2px solid #ddd",
+            borderRadius: "5px",
+            boxSizing: "border-box"
+          }}
+        />
+      </div>
+
+      <div style={{ marginBottom: "20px", textAlign: "left" }}>
+        <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
+          Room B ID:
+        </label>
+        <input
+          type="text"
+          value={roomBInput}
+          onChange={(e) => setRoomBInput(e.target.value)}
+          placeholder="Enter Room B ID"
+          style={{
+            width: "100%",
+            padding: "12px",
+            fontSize: "14px",
+            border: "2px solid #ddd",
+            borderRadius: "5px",
+            boxSizing: "border-box"
+          }}
+        />
+      </div>
+
+      <div style={{ marginBottom: "30px", textAlign: "left" }}>
+        <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
+          Which room to join first?
+        </label>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+            <input
+              type="radio"
+              value="A"
+              checked={selectedRoom === "A"}
+              onChange={(e) => setSelectedRoom(e.target.value)}
+              style={{ marginRight: "5px" }}
+            />
+            Room A
+          </label>
+          <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+            <input
+              type="radio"
+              value="B"
+              checked={selectedRoom === "B"}
+              onChange={(e) => setSelectedRoom(e.target.value)}
+              style={{ marginRight: "5px" }}
+            />
+            Room B
+          </label>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+        <button
+          onClick={onBack}
+          style={{
+            padding: "15px 30px",
+            fontSize: "16px",
+            backgroundColor: "#9e9e9e",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontWeight: "bold"
+          }}
+        >
+          ← Back
+        </button>
+        <button
+          onClick={handleJoin}
+          style={{
+            padding: "15px 30px",
+            fontSize: "16px",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontWeight: "bold"
+          }}
+        >
+          Join Room {selectedRoom}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [roomAId, setRoomAId] = useState(null);
   const [roomBId, setRoomBId] = useState(null);
   const [currentRoom, setCurrentRoom] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showJoinScreen, setShowJoinScreen] = useState(false);
 
   const createRooms = async () => {
     setLoading(true);
@@ -354,13 +566,21 @@ function App() {
       
       console.log("✅ Room A created:", roomA);
       console.log("✅ Room B created:", roomB);
-      alert(`Rooms created successfully!\n\nRoom A: ${roomA}\nRoom B: ${roomB}\n\nYou're now in Room A.`);
+      alert(`Rooms created successfully!\n\nRoom A: ${roomA}\nRoom B: ${roomB}\n\nYou're now in Room A.\n\n📋 Copy these IDs to join from another tab!`);
     } catch (error) {
       console.error("❌ Error creating rooms:", error);
       alert("Failed to create rooms. Please check your auth token and try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleJoinExistingRooms = (roomA, roomB, startRoom) => {
+    setRoomAId(roomA);
+    setRoomBId(roomB);
+    setCurrentRoom(startRoom);
+    setShowJoinScreen(false);
+    console.log("✅ Joined existing rooms - Room A:", roomA, "Room B:", roomB);
   };
 
   const handleSwitchRoom = (newRoomId) => {
@@ -371,7 +591,18 @@ function App() {
     setCurrentRoom(null);
     setRoomAId(null);
     setRoomBId(null);
+    setShowJoinScreen(false);
   };
+
+  // Join Existing Room Screen
+  if (showJoinScreen) {
+    return (
+      <JoinExistingRoomScreen
+        onJoinRoom={handleJoinExistingRooms}
+        onBack={() => setShowJoinScreen(false)}
+      />
+    );
+  }
 
   // Welcome Screen
   if (!currentRoom) {
@@ -399,22 +630,40 @@ function App() {
         {loading ? (
           <p style={{ fontSize: "18px" }}>Creating rooms... ⏳</p>
         ) : (
-          <button
-            onClick={createRooms}
-            style={{
-              padding: "20px 50px",
-              fontSize: "18px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
-            }}
-          >
-            🚀 Create Two Rooms & Start
-          </button>
+          <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              onClick={createRooms}
+              style={{
+                padding: "20px 40px",
+                fontSize: "18px",
+                backgroundColor: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: "bold",
+                boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+              }}
+            >
+              🚀 Create New Rooms
+            </button>
+            <button
+              onClick={() => setShowJoinScreen(true)}
+              style={{
+                padding: "20px 40px",
+                fontSize: "18px",
+                backgroundColor: "#2196F3",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: "bold",
+                boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+              }}
+            >
+              🚪 Join Existing Rooms
+            </button>
+          </div>
         )}
         
         <div style={{ 
@@ -427,11 +676,11 @@ function App() {
         }}>
           <strong>📝 Instructions:</strong>
           <ol style={{ marginTop: "10px", lineHeight: "1.8" }}>
-            <li>Click "Create Two Rooms & Start" to initialize Room A and Room B</li>
-            <li>Join Room A and enable your camera/microphone</li>
-            <li>Use "Switch to Room B" to move between rooms</li>
-            <li>Use "Start Media Relay" to broadcast to the other room</li>
-            <li>Open this app in another browser tab to see both rooms simultaneously</li>
+            <li><strong>First Tab:</strong> Click "Create New Rooms" to initialize Room A and Room B</li>
+            <li><strong>Copy Room IDs:</strong> Once created, copy the Room IDs displayed at the top</li>
+            <li><strong>Second Tab:</strong> Open this app in a new tab/window</li>
+            <li><strong>Join Same Rooms:</strong> Click "Join Existing Rooms" and paste the Room IDs</li>
+            <li><strong>Test Features:</strong> Now you can test room switching and media relay between tabs!</li>
           </ol>
         </div>
 
@@ -443,11 +692,11 @@ function App() {
           fontSize: "13px",
           textAlign: "left"
         }}>
-          <strong>⚠️ Troubleshooting Camera Issues:</strong>
+          <strong>⚠️ Troubleshooting:</strong>
           <ul style={{ marginTop: "10px", lineHeight: "1.6" }}>
             <li>Close other apps using your camera (Zoom, Teams, Skype, etc.)</li>
             <li>Grant camera/microphone permissions to your browser</li>
-            <li>Try refreshing the page if camera won't start</li>
+            <li>Use different browser profiles or incognito windows for testing</li>
             <li>Check if your camera is properly connected</li>
           </ul>
         </div>
@@ -480,6 +729,8 @@ function App() {
             targetRoomId={targetRoomId}
             targetRoomName={targetRoomName}
             onLeaveAll={handleLeaveAll}
+            roomAId={roomAId}
+            roomBId={roomBId}
           />
         )}
       </MeetingConsumer>
