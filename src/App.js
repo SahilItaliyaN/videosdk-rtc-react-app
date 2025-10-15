@@ -30,9 +30,9 @@ function ParticipantView({ participantId }) {
   }, [micStream, micOn]);
 
   return (
-    <div style={{ 
-      margin: "10px", 
-      border: "2px solid #2196F3", 
+    <div style={{
+      margin: "10px",
+      border: "2px solid #2196F3",
       padding: "15px",
       borderRadius: "8px",
       backgroundColor: "#f9f9f9"
@@ -60,11 +60,11 @@ function ParticipantView({ participantId }) {
   );
 }
 
-function RoomInterface({ 
-  meetingId, 
-  roomName, 
-  onSwitchRoom, 
-  targetRoomId, 
+function RoomInterface({
+  meetingId,
+  roomName,
+  onSwitchRoom,
+  targetRoomId,
   targetRoomName,
   onLeaveAll,
   roomAId,
@@ -75,11 +75,11 @@ function RoomInterface({
   const [isTogglingWebcam, setIsTogglingWebcam] = useState(false);
   const [isTogglingMic, setIsTogglingMic] = useState(false);
 
-  const { 
-    join, 
-    leave, 
-    toggleMic, 
-    toggleWebcam, 
+  const {
+    join,
+    leave,
+    toggleMic,
+    toggleWebcam,
     participants,
     meeting,
     localMicOn,
@@ -108,12 +108,12 @@ function RoomInterface({
 
   const handleSwitchRoom = () => {
     console.log(`🔄 Switching from ${roomName} to ${targetRoomName}`);
-    
+
     if (relayActive && meeting) {
       meeting.stopLivestream().catch(err => console.error("Error stopping relay:", err));
       setRelayActive(false);
     }
-    
+
     leave();
     setTimeout(() => {
       onSwitchRoom(targetRoomId);
@@ -122,7 +122,7 @@ function RoomInterface({
 
   const handleToggleMic = async () => {
     if (isTogglingMic) return;
-    
+
     setIsTogglingMic(true);
     try {
       await toggleMic();
@@ -137,7 +137,7 @@ function RoomInterface({
 
   const handleToggleWebcam = async () => {
     if (isTogglingWebcam) return;
-    
+
     setIsTogglingWebcam(true);
     try {
       await toggleWebcam();
@@ -156,7 +156,7 @@ function RoomInterface({
     try {
       if (!relayActive) {
         console.log(`🎥 Starting media relay to ${targetRoomName}`);
-        
+
         await meeting.startLivestream({
           outputs: [
             {
@@ -165,7 +165,7 @@ function RoomInterface({
             },
           ],
         });
-        
+
         setRelayActive(true);
         console.log(`✅ Media relay active to ${targetRoomName}`);
         alert(`Media Relay Started!\n\nYour audio/video is now being broadcast to ${targetRoomName}.\n\nOpen another tab and join ${targetRoomName} to see the relay.`);
@@ -200,16 +200,16 @@ function RoomInterface({
   };
 
   return (
-    <div style={{ 
-      padding: "20px", 
-      border: "3px solid #4CAF50", 
+    <div style={{
+      padding: "20px",
+      border: "3px solid #4CAF50",
       borderRadius: "10px",
       margin: "20px",
       backgroundColor: "white"
     }}>
-      <div style={{ 
-        backgroundColor: "#4CAF50", 
-        padding: "15px", 
+      <div style={{
+        backgroundColor: "#4CAF50",
+        padding: "15px",
         borderRadius: "5px",
         color: "white",
         marginBottom: "20px"
@@ -221,9 +221,9 @@ function RoomInterface({
       </div>
 
       {/* Room IDs Display */}
-      <div style={{ 
-        padding: "15px", 
-        backgroundColor: "#e3f2fd", 
+      <div style={{
+        padding: "15px",
+        backgroundColor: "#e3f2fd",
         borderRadius: "5px",
         marginBottom: "20px"
       }}>
@@ -231,16 +231,16 @@ function RoomInterface({
         <div style={{ display: "flex", gap: "10px", flexDirection: "column" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <span style={{ fontSize: "14px", fontWeight: "bold" }}>Room A:</span>
-            <code style={{ 
-              backgroundColor: "white", 
-              padding: "5px 10px", 
+            <code style={{
+              backgroundColor: "white",
+              padding: "5px 10px",
               borderRadius: "3px",
               fontSize: "12px",
               flex: 1
             }}>
               {roomAId}
             </code>
-            <button 
+            <button
               onClick={() => copyRoomId(roomAId, "Room A")}
               style={{
                 padding: "5px 15px",
@@ -257,16 +257,16 @@ function RoomInterface({
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <span style={{ fontSize: "14px", fontWeight: "bold" }}>Room B:</span>
-            <code style={{ 
-              backgroundColor: "white", 
-              padding: "5px 10px", 
+            <code style={{
+              backgroundColor: "white",
+              padding: "5px 10px",
               borderRadius: "3px",
               fontSize: "12px",
               flex: 1
             }}>
               {roomBId}
             </code>
-            <button 
+            <button
               onClick={() => copyRoomId(roomBId, "Room B")}
               style={{
                 padding: "5px 15px",
@@ -282,18 +282,18 @@ function RoomInterface({
             </button>
           </div>
         </div>
-        <p style={{ 
-          margin: "10px 0 0 0", 
-          fontSize: "12px", 
+        <p style={{
+          margin: "10px 0 0 0",
+          fontSize: "12px",
           color: "#666",
-          fontStyle: "italic" 
+          fontStyle: "italic"
         }}>
           💡 Copy these IDs and use "Join Existing Room" in another tab to join the same rooms
         </p>
       </div>
 
       {!joined ? (
-        <button 
+        <button
           onClick={handleJoin}
           style={{
             padding: "15px 40px",
@@ -311,15 +311,15 @@ function RoomInterface({
       ) : (
         <>
           {/* Controls */}
-          <div style={{ 
-            padding: "15px", 
-            backgroundColor: "#f5f5f5", 
+          <div style={{
+            padding: "15px",
+            backgroundColor: "#f5f5f5",
             borderRadius: "5px",
             marginBottom: "20px"
           }}>
             <h3 style={{ marginTop: 0 }}>⚙️ Controls</h3>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              <button 
+              <button
                 onClick={handleToggleMic}
                 disabled={isTogglingMic}
                 style={{
@@ -330,7 +330,7 @@ function RoomInterface({
               >
                 🎤 {isTogglingMic ? "Toggling..." : localMicOn ? "Mute Mic" : "Unmute Mic"}
               </button>
-              <button 
+              <button
                 onClick={handleToggleWebcam}
                 disabled={isTogglingWebcam}
                 style={{
@@ -341,24 +341,24 @@ function RoomInterface({
               >
                 📹 {isTogglingWebcam ? "Toggling..." : localWebcamOn ? "Stop Camera" : "Start Camera"}
               </button>
-              <button 
-                onClick={handleSwitchRoom} 
-                style={{...controlButton, backgroundColor: "#2196F3"}}
+              <button
+                onClick={handleSwitchRoom}
+                style={{ ...controlButton, backgroundColor: "#2196F3" }}
               >
                 🔄 Switch to {targetRoomName}
               </button>
-              <button 
+              <button
                 onClick={handleMediaRelay}
                 style={{
-                  ...controlButton, 
+                  ...controlButton,
                   backgroundColor: relayActive ? "#f44336" : "#FF9800"
                 }}
               >
                 {relayActive ? "🛑 Stop Relay" : "📡 Start Media Relay"}
               </button>
-              <button 
+              <button
                 onClick={handleLeaveAll}
-                style={{...controlButton, backgroundColor: "#f44336"}}
+                style={{ ...controlButton, backgroundColor: "#f44336" }}
               >
                 🚪 Leave All
               </button>
@@ -431,8 +431,8 @@ function JoinExistingRoomScreen({ onJoinRoom, onBack }) {
   };
 
   return (
-    <div style={{ 
-      padding: "40px", 
+    <div style={{
+      padding: "40px",
       textAlign: "center",
       maxWidth: "600px",
       margin: "0 auto"
@@ -559,11 +559,11 @@ function App() {
       console.log("🏗️ Creating two rooms...");
       const roomA = await createMeeting({ token: authToken });
       const roomB = await createMeeting({ token: authToken });
-      
+
       setRoomAId(roomA);
       setRoomBId(roomB);
       setCurrentRoom(roomA);
-      
+
       console.log("✅ Room A created:", roomA);
       console.log("✅ Room B created:", roomB);
       alert(`Rooms created successfully!\n\nRoom A: ${roomA}\nRoom B: ${roomB}\n\nYou're now in Room A.\n\n📋 Copy these IDs to join from another tab!`);
@@ -607,8 +607,8 @@ function App() {
   // Welcome Screen
   if (!currentRoom) {
     return (
-      <div style={{ 
-        padding: "40px", 
+      <div style={{
+        padding: "40px",
         textAlign: "center",
         maxWidth: "800px",
         margin: "0 auto"
@@ -617,16 +617,16 @@ function App() {
         <p style={{ fontSize: "16px", color: "#666", marginBottom: "30px" }}>
           This demo showcases two room switching methods:
         </p>
-        <ul style={{ 
-          textAlign: "left", 
-          maxWidth: "600px", 
+        <ul style={{
+          textAlign: "left",
+          maxWidth: "600px",
           margin: "0 auto 30px",
           lineHeight: "1.8"
         }}>
           <li><strong>Normal Room Switch:</strong> Leave Room A and join Room B</li>
           <li><strong>Media Relay:</strong> Broadcast your audio/video from one room to another</li>
         </ul>
-        
+
         {loading ? (
           <p style={{ fontSize: "18px" }}>Creating rooms... ⏳</p>
         ) : (
@@ -665,10 +665,10 @@ function App() {
             </button>
           </div>
         )}
-        
-        <div style={{ 
-          marginTop: "40px", 
-          padding: "20px", 
+
+        <div style={{
+          marginTop: "40px",
+          padding: "20px",
           backgroundColor: "#e3f2fd",
           borderRadius: "8px",
           fontSize: "14px",
@@ -684,9 +684,9 @@ function App() {
           </ol>
         </div>
 
-        <div style={{ 
-          marginTop: "20px", 
-          padding: "15px", 
+        <div style={{
+          marginTop: "20px",
+          padding: "15px",
           backgroundColor: "#fff3cd",
           borderRadius: "8px",
           fontSize: "13px",
