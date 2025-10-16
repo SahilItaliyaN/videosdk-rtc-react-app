@@ -1,6 +1,7 @@
 //This is the Auth token, you will use it to generate a meeting and connect to it
-export const authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiJmMzBlYTZjMC1jNmM4LTQ3NWMtYWZhYy02NzlhN2I3ODBiNTQiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc2MDQ1ODUwNiwiZXhwIjoxNzYxMDYzMzA2fQ.JuCIaokmIAnYrV6jYy3M00YGDQAz84eAY9y_oQrelhc";
-// API call to create a meeting
+export const authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiJmMzBlYTZjMC1jNmM4LTQ3NWMtYWZhYy02NzlhN2I3ODBiNTQiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIiwiYWxsb3dfbW9kIiwiYWxsb3dfbGl2ZV9zdHJlYW0iXSwiaWF0IjoxNzYwNjAzMTcxLCJleHAiOjE3NjEyMDc5NzF9.J4eFxkn1NE_BqHFKrusraOylkJNBMnX18xKjepkFvGk";
+
+// Function to create a new meeting room
 export const createMeeting = async ({ token }) => {
   const res = await fetch(`https://api.videosdk.live/v2/rooms`, {
     method: "POST",
@@ -16,7 +17,7 @@ export const createMeeting = async ({ token }) => {
     throw new Error(`Failed to create meeting: ${res.status} ${text}`);
   }
 
-  //Destructuring the roomId from the response
+  // Extract the roomId from response
   const { roomId } = await res.json();
   return roomId;
 };
