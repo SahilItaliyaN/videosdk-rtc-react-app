@@ -160,7 +160,7 @@ function RoomInterface({
     try {
       if (!relayActive) {
 
-        await meeting.startLivestream({
+        const result = await meeting.startLivestream({
           outputs: [
             {
               url: `rtmp://live.videosdk.live/live/${targetRoomId}`,
@@ -168,6 +168,10 @@ function RoomInterface({
             },
           ],
         });
+
+        if (result && result.status === "FAILED") {
+          throw new Error("Live stream failed to start");
+        }
 
         setRelayActive(true);
         alert(`Media Relay Started!\n\nYour audio/video is now being broadcast to ${targetRoomName}.\n\nOpen another tab and join ${targetRoomName} to see the relay.`);
