@@ -1,7 +1,0 @@
-- [x] Analyze requirements
-- [x] Read src/App.js to understand room and media handling
-- [x] Identify how "media relay" is implemented or conceptualized in the app
-- [x] Formulate a step-by-step guide for the user
-- [x] Present the guide to the user
-- [x] Investigate why media relay is not displaying in the target room
-- [ ] Consult VideoSDK documentation for displaying RTMP streams as participants
