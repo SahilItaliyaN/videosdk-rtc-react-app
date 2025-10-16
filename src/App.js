@@ -87,12 +87,10 @@ function RoomInterface({
   } = useMeeting({
     onMeetingJoined: () => {
       setJoined(true);
-      console.log(`✅ Joined ${roomName} (${meetingId})`);
     },
     onMeetingLeft: () => {
       setJoined(false);
       setRelayActive(false);
-      console.log(`👋 Left ${roomName}`);
     },
     onError: (error) => {
       console.error("Meeting error:", error);
@@ -107,16 +105,13 @@ function RoomInterface({
   };
 
   const handleSwitchRoom = () => {
-    console.log(`🔄 Switching from ${roomName} to ${targetRoomName}`);
 
     // Ensure stopLivestream is called and completes before leaving
     const stopAndLeave = async () => {
       if (relayActive && meeting) {
         try {
-          console.log("🛑 Stopping media relay before switching rooms...");
           await meeting.stopLivestream();
           setRelayActive(false); // Reset relay state
-          console.log("✅ Media relay stopped successfully.");
         } catch (err) {
           console.error("Error stopping relay before switching:", err);
           // Even if stopping fails, we still proceed to leave and switch rooms
@@ -137,7 +132,6 @@ function RoomInterface({
     setIsTogglingMic(true);
     try {
       await toggleMic();
-      console.log(`🎤 Mic ${localMicOn ? 'disabled' : 'enabled'}`);
     } catch (error) {
       console.error("Error toggling mic:", error);
       alert("Failed to toggle microphone. Please check permissions.");
@@ -152,7 +146,6 @@ function RoomInterface({
     setIsTogglingWebcam(true);
     try {
       await toggleWebcam();
-      console.log(`📹 Webcam ${localWebcamOn ? 'disabled' : 'enabled'}`);
     } catch (error) {
       console.error("Error toggling webcam:", error);
       alert("Failed to toggle webcam. Please ensure:\n1. No other app is using the camera\n2. Camera permissions are granted\n3. Camera is properly connected");
@@ -166,7 +159,6 @@ function RoomInterface({
 
     try {
       if (!relayActive) {
-        console.log(`🎥 Starting media relay to ${targetRoomName}`);
 
         await meeting.startLivestream({
           outputs: [
@@ -178,15 +170,12 @@ function RoomInterface({
         });
 
         setRelayActive(true);
-        console.log(`✅ Media relay active to ${targetRoomName}`);
         alert(`Media Relay Started!\n\nYour audio/video is now being broadcast to ${targetRoomName}.\n\nOpen another tab and join ${targetRoomName} to see the relay.`);
       } else {
-        console.log("🛑 Stopping media relay");
         // Ensure meeting object is still valid before attempting to stop livestream
         if (meeting) {
           await meeting.stopLivestream();
           setRelayActive(false);
-          console.log("✅ Media relay stopped");
         } else {
           console.warn("Meeting object is undefined, cannot stop livestream.");
           setRelayActive(false); // Still reset state if meeting is gone
@@ -203,7 +192,6 @@ function RoomInterface({
       try {
         meeting.stopLivestream().catch(err => console.error("Error stopping relay:", err));
       } catch (error) {
-        console.log("error in the all leave all", error)
       }
     }
     leave();
@@ -577,7 +565,6 @@ function App() {
   const createRooms = async () => {
     setLoading(true);
     try {
-      console.log("🏗️ Creating two rooms...");
       const roomA = await createMeeting({ token: authToken });
       const roomB = await createMeeting({ token: authToken });
 
@@ -585,11 +572,8 @@ function App() {
       setRoomBId(roomB);
       setCurrentRoom(roomA);
 
-      console.log("✅ Room A created:", roomA);
-      console.log("✅ Room B created:", roomB);
       alert(`Rooms created successfully!\n\nRoom A: ${roomA}\nRoom B: ${roomB}\n\nYou're now in Room A.\n\n📋 Copy these IDs to join from another tab!`);
     } catch (error) {
-      console.error("❌ Error creating rooms:", error);
       alert("Failed to create rooms. Please check your auth token and try again.");
     } finally {
       setLoading(false);
@@ -601,7 +585,6 @@ function App() {
     setRoomBId(roomB);
     setCurrentRoom(startRoom);
     setShowJoinScreen(false);
-    console.log("✅ Joined existing rooms - Room A:", roomA, "Room B:", roomB);
   };
 
   const handleSwitchRoom = (newRoomId) => {
